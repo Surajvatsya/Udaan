@@ -1,0 +1,51 @@
+.
+├── README.md
+├── a.txt
+├── package-lock.json
+├── package.json
+├── src
+│   ├── App.css
+│   ├── App.js
+│   ├── App.test.js
+│   ├── components
+│   │   ├── CallPlanning
+│   │   │   ├── CallList.js
+│   │   │   └── PlanCall.js
+│   │   ├── ContactManagement
+│   │   │   ├── AddContact.js
+│   │   │   ├── ContactDetails.js
+│   │   │   └── ContactList.js
+│   │   ├── InteractionTracking
+│   │   │   ├── AddInteraction.js
+│   │   │   ├── InteractionDetails.js
+│   │   │   └── InteractionList.js
+│   │   ├── LeadManagement
+│   │   │   ├── AddLead.js
+│   │   │   ├── LeadDetails.js
+│   │   │   └── LeadList.js
+│   │   ├── PerformanceTracking
+│   │   │   ├── PerformanceOverview.js
+│   │   │   └── UnderperformingAccounts.js
+│   ├── index.css
+│   ├── index.js
+│   ├── logo.svg
+│   ├── pages
+│   │   ├── CallPlanningPage.js
+│   │   ├── ContactManagementPage.js
+│   │   ├── Dashboard.js
+│   │   ├── InteractionTrackingPage.js
+│   │   ├── LeadManagementPage.js
+│   │   └── PerformanceTrackingPage.js
+│   ├── reportWebVitals.js
+│   ├── setupTests.js
+│   ├── styles
+│   │   ├── Leadmanagement
+│   │   │   ├── AddLead.css
+│   │   │   ├── LeadDetails.css
+│   │   │   └── LeadList.css
+│   │   ├── POC
+│   │   │   ├── AddContacts.css
+│   │   │   └── ContactList.css
+│   │   └── global.css
+│   └── utils
+└── tailwind.config.js
