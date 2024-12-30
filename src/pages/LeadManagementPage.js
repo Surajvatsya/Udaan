@@ -5,6 +5,8 @@ import Summary from '../components/LeadManagement/Summary';
 
 const LeadManagementPage = () => {
   const [leads, setLeads] = useState([]);
+  const [filteredLeads, setFilteredLeads] = useState([]); // Filtered leads for search
+  const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ const LeadManagementPage = () => {
           lastContact: lead.updated_at,
         }));
         setLeads(formattedLeads);
+        setFilteredLeads(formattedLeads);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -38,6 +41,20 @@ const LeadManagementPage = () => {
     setLeads([...leads, newLead]);
   };
 
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    // Filter leads based on the search query
+    const results = leads.filter(
+      (lead) =>
+        lead.name.toLowerCase().includes(query) ||
+        lead.status.toLowerCase().includes(query)
+    );
+    setFilteredLeads(results);
+  };
+
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <div className="flex-1 p-6">
@@ -46,6 +63,8 @@ const LeadManagementPage = () => {
           <input
             type="text"
             placeholder="Search leads..."
+            value={searchQuery}
+            onChange={handleSearch}
             className="w-1/2 p-2 border rounded"
           />
           <button 
@@ -61,9 +80,9 @@ const LeadManagementPage = () => {
           <p className="text-red-500">Error: {error}</p>
         ) : (
           <>
-            <LeadList leads={leads} onAddLead={handleAddLead} />
+            <LeadList leads={filteredLeads} onAddLead={handleAddLead} />
             <div className="mt-10">
-              <Summary leads={leads} />
+              <Summary leads={filteredLeads} />
             </div>
           </>
         )}

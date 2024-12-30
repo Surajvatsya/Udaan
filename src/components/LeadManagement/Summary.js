@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Summary = ({ leads }) => {
   const totalLeads = leads.length;
   const activeLeads = leads.filter((lead) => lead.status === 'Active').length;
-  const todaysCalls = 12; // Mocked data
+  // const todaysCalls = 12; // Mocked data
+  const [todaysCalls, setTodaysCalls] = useState(0);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTodaysCalls = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/interactions/today');
+        if (!response.ok) {
+          throw new Error('Failed to fetch today\'s calls');
+        }
+        const data = await response.json();
+        setTodaysCalls(data.todaysCallsCount || 0);
+      } catch (err) {
+        console.error('Error fetching today\'s calls:', err);
+        setError('Failed to fetch today\'s calls');
+      }
+    };
+
+    fetchTodaysCalls();
+  }, []);
 
   return (
     <div className="grid grid-cols-3 gap-6">
