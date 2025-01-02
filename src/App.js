@@ -32,6 +32,7 @@ function App() {
           <Route path="/contacts" element={<ContactManagementPage />} />
           <Route path="/interaction" element={<Interaction />} />
           <Route path="/order" element={<Order />} />
+          <Route path="/calls" element={<CallPlanningPage />} />
           <Route path="/performance" element={<Performance />} />
           <Route path="/orders/:order_id" element={<OrderDetailsPage />} />
           <Route path="/restaurantsDetails/:id" element={<RestaurantDetailsPage />} />

@@ -5,8 +5,9 @@ import Summary from '../components/LeadManagement/Summary';
 
 const LeadManagementPage = () => {
   const [leads, setLeads] = useState([]);
-  const [filteredLeads, setFilteredLeads] = useState([]); // Filtered leads for search
+  const [filteredLeads, setFilteredLeads] = useState([]); // Filtered leads for search and status
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
+  const [filterStatus, setFilterStatus] = useState('All'); // Filter by status state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -37,23 +38,35 @@ const LeadManagementPage = () => {
     fetchLeads();
   }, []);
 
-  const handleAddLead = (newLead) => {
-    setLeads([...leads, newLead]);
-  };
-
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-
-    // Filter leads based on the search query
-    const results = leads.filter(
-      (lead) =>
-        lead.name.toLowerCase().includes(query) ||
-        lead.status.toLowerCase().includes(query)
-    );
-    setFilteredLeads(results);
+    filterLeads(query, filterStatus);
   };
 
+  const handleFilterChange = (e) => {
+    const status = e.target.value;
+    setFilterStatus(status);
+    filterLeads(searchQuery, status);
+  };
+
+  const filterLeads = (query, status) => {
+    let results = leads;
+
+    if (query) {
+      results = results.filter(
+        (lead) =>
+          lead.name.toLowerCase().includes(query) ||
+          lead.status.toLowerCase().includes(query)
+      );
+    }
+
+    if (status !== 'All') {
+      results = results.filter((lead) => lead.status === status);
+    }
+
+    setFilteredLeads(results);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -67,12 +80,16 @@ const LeadManagementPage = () => {
             onChange={handleSearch}
             className="w-1/2 p-2 border rounded"
           />
-          <button 
-            className="bg-green-500 text-white px-4 py-2 rounded"
-            onClick={() => navigate('/addLead')}
+          <select
+            value={filterStatus}
+            onChange={handleFilterChange}
+            className="p-2 border rounded text-gray-700"
           >
-            + Add Lead
-          </button>
+            <option value="All">All</option>
+            <option value="Active">Active</option>
+            <option value="New">New</option>
+            <option value="Inactive">Inactive</option>
+          </select>
         </div>
         {loading ? (
           <p>Loading...</p>
@@ -80,12 +97,18 @@ const LeadManagementPage = () => {
           <p className="text-red-500">Error: {error}</p>
         ) : (
           <>
-            <LeadList leads={filteredLeads} onAddLead={handleAddLead} />
+            <LeadList leads={filteredLeads} />
             <div className="mt-10">
               <Summary leads={filteredLeads} />
             </div>
           </>
         )}
+        <button
+          className="fixed bottom-8 right-8 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600"
+          onClick={() => navigate('/addLead')}
+        >
+          + Add Lead
+        </button>
       </div>
     </div>
   );

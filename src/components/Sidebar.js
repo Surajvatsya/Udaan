@@ -33,28 +33,28 @@ const Sidebar = () => {
         </li>
         <li
           className={`mb-4 p-2 rounded cursor-pointer hover:bg-[#D8A71D] ${
-            location.pathname === "/contacts" ? "bg-[#D8A71D]" : "bg-blue-800"
+            location.pathname === "/calls" ? "bg-[#D8A71D]" : "bg-blue-800"
           }`}
-          onClick={() => handleNavigation("/contacts")}
+          onClick={() => handleNavigation("/calls")}
         >
           Contact Management
         </li>
-        <li
+        {/* <li
           className={`mb-4 p-2 rounded cursor-pointer hover:bg-[#D8A71D] ${
             location.pathname === "/interaction" ? "bg-[#D8A71D]" : "bg-blue-800"
           }`}
           onClick={() => handleNavigation("/interaction")}
         >
           Interactions
-        </li>
-        <li
+        </li> */}
+        {/* <li
           className={`mb-4 p-2 rounded cursor-pointer hover:bg-[#D8A71D] ${
             location.pathname === "/order" ? "bg-[#D8A71D]" : "bg-blue-800"
           }`}
           onClick={() => handleNavigation("/order")}
         >
           Order
-        </li>
+        </li> */}
         <li
           className={`mb-4 p-2 rounded cursor-pointer hover:bg-[#D8A71D] ${
             location.pathname === "/performance" ? "bg-[#D8A71D]" : "bg-blue-800"

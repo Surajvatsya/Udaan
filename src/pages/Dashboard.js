@@ -1,5 +1,5 @@
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Header Component
 const Header = () => {
@@ -40,16 +40,16 @@ const Features = () => {
         onClick={() => navigate('/leads')}
       />
       <FeatureCard
-        title="Contact Management"
-        description="Track POCs and roles"
+        title="POC"
+        description="Add POCs and roles"
         gradient="from-green-700 to-green-500"
         onClick={() => navigate('/contacts')}
       />
       <FeatureCard
-        title="Call Planning"
-        description="Plan and track calls"
+        title="Add an Interaction"
+        description="Record calls and follow-ups"
         gradient="from-purple-700 to-purple-500"
-        onClick={() => navigate('/leads')}
+        onClick={() => navigate('/interaction')}
       />
     </section>
   );
@@ -57,14 +57,14 @@ const Features = () => {
 
 // Account Performance Section
 const AccountPerformance = () => {
+  const navigate = useNavigate();
   return (
-    <section className="py-10 px-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-xl font-bold text-blue-900">Account Performance</h2>
-      <div className="mt-6 h-40 bg-gray-100 flex justify-center items-center">
-        {/* Example animated chart */}
-        <p className="text-gray-500">Chart Placeholder</p>
-      </div>
-    </section>
+  <FeatureCard
+    title="Order"
+    description="Place an Order"
+    gradient="from-red-800 to-red-500"
+    onClick={() => navigate('/order')}
+  />
   );
 };
 
@@ -93,9 +93,9 @@ const LandingPage = () => {
     <div>
       <Header />
       <Features />
-      <div className="py-10 px-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="py-10 px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         <AccountPerformance />
-        <UpcomingCalls />
+        {/* <UpcomingCalls /> */}
       </div>
     </div>
   );

@@ -123,14 +123,14 @@ function AddLeadModal({ onClose }) {
 
           {/* CONTACT INFORMATION */}
           <section style={styles.section}>
-            <h3 style={styles.sectionTitle}>Contact Information</h3>
+            {/* <h3 style={styles.sectionTitle}>Contact Information</h3> */}
             <div style={styles.formRow}>
-              {/* <TextInput
-                label="Primary Contact Name*"
-                value={primaryContactName}
-                onChange={(e) => setPrimaryContactName(e.target.value)}
-                placeholder="e.g. John Doe"
-              /> */}
+            <SelectInput
+                label="Restaurant Name*"
+                value={restaurantType}
+                onChange={(e) => setRestaurantType(e.target.value)}
+                options={restaurantTypes}
+              />
               <TextInput
                 label="Role*"
                 value={role}
