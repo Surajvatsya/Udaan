@@ -1,77 +1,153 @@
-// AccountPerformanceDistribution.js
-export const AccountPerformanceDistribution = () => (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-bold text-blue-900 mb-4">Account Performance Distribution</h3>
-      <div className="h-48 bg-gray-100 flex items-center justify-center">(Donut Chart Placeholder)</div>
-    </div>
-  );
+import React, { useEffect, useState } from 'react';
+import { Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
-  export const TopPerformingAccounts = () => (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-bold text-blue-900 mb-4">Top Performing Accounts</h3>
-      <table className="w-full text-left">
-        <thead>
-          <tr>
-            <th className="border-b py-2">Account Name</th>
-            <th className="border-b py-2">Orders</th>
-            <th className="border-b py-2">Growth</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="py-2">Spice Garden</td>
-            <td className="py-2">245</td>
-            <td className="py-2 text-green-600">+28%</td>
-          </tr>
-          <tr>
-            <td className="py-2">Food Haven</td>
-            <td className="py-2">198</td>
-            <td className="py-2 text-green-600">+22%</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-// AtRiskAccounts.js
-export const AtRiskAccounts = () => (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-bold text-blue-900 mb-4">At-Risk Accounts</h3>
-      <table className="w-full text-left">
-        <thead>
-          <tr>
-            <th className="border-b py-2">Account Name</th>
-            <th className="border-b py-2">Last Order</th>
-            <th className="border-b py-2">Trend</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="py-2">Taste of India</td>
-            <td className="py-2">15 days ago</td>
-            <td className="py-2 text-red-600">-18%</td>
-          </tr>
-          <tr>
-            <td className="py-2">Green Plate</td>
-            <td className="py-2">20 days ago</td>
-            <td className="py-2 text-red-600">-25%</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-  
-  // TimePeriodSelector.js
-  export const TimePeriodSelector = () => (
-    <select className="bg-gray-200 p-2 rounded">
-      <option>Last 30 Days</option>
-      <option>Last 7 Days</option>
-      <option>Last Year</option>
-    </select>
-  );  
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-// export {
-//     AccountPerformanceDistribution,
-//     TopPerformingAccounts,
-//     AtRiskAccounts,
-//     TimePeriodSelector
-//   };
+export const AccountPerformanceDistribution = ({ timePeriod }) => {
+  const [revenueData, setRevenueData] = useState([]);
+  const [labels, setLabels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRevenueData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:3000/api/leads/revenue_contribution?days=${timePeriod}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch revenue contribution');
+        }
+        const data = await response.json();
+
+        // Extract labels and revenue data for the chart
+        const newLabels = data.map((item) => item.restaurantName);
+        const newRevenueData = data.map((item) => parseFloat(item.totalRevenue));
+
+        setLabels(newLabels);
+        setRevenueData(newRevenueData);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching revenue data:', err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchRevenueData();
+  }, [timePeriod]);
+
+  const chartData = {
+    labels: labels,
+    datasets: [
+      {
+        data: revenueData,
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FFA726'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FFA726'],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => {
+            const value = tooltipItem.raw;
+            return `₹${value.toLocaleString()}`;
+          },
+        },
+      },
+    },
+    maintainAspectRatio: false,
+    responsive: true,
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
+
+  return (
+    <div className="bg-white p-6 rounded" style={{ height: '300px', width: '300px' }}>
+      <Doughnut data={chartData} options={options} />
+    </div>
+  );
+};
+
+
+export const TopPerformingAccounts = ({ accounts = [] }) => (
+  <div className="bg-white p-4 rounded-lg shadow">
+    <h3 className="text-lg font-bold text-blue-900 mb-4">Top Performing Accounts</h3>
+    <table className="w-full text-left">
+      <thead>
+        <tr>
+          <th className="border-b py-2">Account Name</th>
+          <th className="border-b py-2">Orders</th>
+          <th className="border-b py-2">Revenue</th>
+        </tr>
+      </thead>
+      <tbody>
+        {accounts.length > 0 ? (
+          accounts.map((account, index) => (
+            <tr key={index}>
+              <td className="py-2">{account.name}</td>
+              <td className="py-2">{account.totalOrders}</td>
+              <td className="py-2">₹{account.totalRevenue}</td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td className="py-2 text-center" colSpan="3">
+              No data available
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+);
+
+
+export const AtRiskAccounts = ({ accounts }) => (
+  <div className="bg-white p-4 rounded-lg shadow">
+    <h3 className="text-lg font-bold text-blue-900 mb-4">At-Risk Accounts</h3>
+    <table className="w-full text-left">
+      <thead>
+        <tr>
+          <th className="border-b py-2">Account Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {accounts.length > 0 ? (
+          accounts.map((account, index) => (
+            <tr key={index}>
+              <td className="py-2">{account.name}</td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td className="py-2 text-center">No data available</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+);
+
+// TimePeriodSelector.js
+export const TimePeriodSelector = ({ onChange }) => (
+  <select
+    className="bg-gray-200 p-2 rounded"
+    onChange={(e) => onChange(e.target.value)}
+  >
+    <option value="7">Last 7 Days</option>
+    <option value="30">Last 30 Days</option>
+    <option value="365">Last Year</option>
+  </select>
+);
+
