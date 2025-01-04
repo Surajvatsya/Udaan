@@ -57,7 +57,9 @@ const Sidebar = () => {
         </li> */}
         <li
           className={`mb-4 p-2 rounded cursor-pointer hover:bg-[#D8A71D] ${
-            location.pathname === "/performance" ? "bg-[#D8A71D]" : "bg-blue-800"
+            location.pathname === "/performance"
+              ? "bg-[#D8A71D]"
+              : "bg-blue-800"
           }`}
           onClick={() => handleNavigation("/performance")}
         >

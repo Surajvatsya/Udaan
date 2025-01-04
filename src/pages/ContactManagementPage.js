@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import AddContacts from "../components/ContactManagement/AddContact";
-// import ContactList from "../components/ContactManagement/ContactList";
 
 function ContactManagementPage() {
   const [contacts, setContacts] = useState([]);
@@ -8,7 +7,13 @@ function ContactManagementPage() {
   useEffect(() => {
     // Fetch contacts from the backend
     async function fetchContacts() {
-      const response = await fetch("http://localhost:3000/api/contacts");
+      const token = localStorage.getItem("jwtToken");
+      const response = await fetch("http://localhost:3000/api/contacts", {
+        headers: {
+          token,
+          "Content-Type": "application/json",
+        },
+      });
       const data = await response.json();
       setContacts(data);
     }
@@ -17,9 +22,9 @@ function ContactManagementPage() {
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
-      {/* <h2>Contact Management</h2> */}
-      <AddContacts onAdd={(newContact) => setContacts([...contacts, newContact])} />
-      {/* <ContactList contacts={contacts} /> */}
+      <AddContacts
+        onAdd={(newContact) => setContacts([...contacts, newContact])}
+      />
     </div>
   );
 }

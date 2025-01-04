@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import LeadList from '../components/LeadManagement/LeadList';
-import Summary from '../components/LeadManagement/Summary';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import LeadList from "../components/LeadManagement/LeadList";
+import Summary from "../components/LeadManagement/Summary";
 
 const LeadManagementPage = () => {
   const [leads, setLeads] = useState([]);
   const [filteredLeads, setFilteredLeads] = useState([]); // Filtered leads for search and status
-  const [searchQuery, setSearchQuery] = useState(''); // Search query state
-  const [filterStatus, setFilterStatus] = useState('All'); // Filter by status state
+  const [searchQuery, setSearchQuery] = useState(""); // Search query state
+  const [filterStatus, setFilterStatus] = useState("All"); // Filter by status state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -15,9 +15,16 @@ const LeadManagementPage = () => {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/leads/');
+        setLoading(true);
+        const token = localStorage.getItem("jwtToken");
+        const response = await fetch("http://localhost:3000/api/leads/", {
+          headers: {
+            token: token,
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
-          throw new Error('Failed to fetch leads');
+          throw new Error("Failed to fetch leads");
         }
         const data = await response.json();
         const formattedLeads = data.map((lead) => ({
@@ -57,11 +64,11 @@ const LeadManagementPage = () => {
       results = results.filter(
         (lead) =>
           lead.name.toLowerCase().includes(query) ||
-          lead.status.toLowerCase().includes(query)
+          lead.status.toLowerCase().includes(query),
       );
     }
 
-    if (status !== 'All') {
+    if (status !== "All") {
       results = results.filter((lead) => lead.status === status);
     }
 
@@ -71,7 +78,9 @@ const LeadManagementPage = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <div className="flex-1 p-6">
-        <h1 className="text-2xl font-bold text-blue-900 mb-6">Lead Management</h1>
+        <h1 className="text-2xl font-bold text-blue-900 mb-6">
+          Lead Management
+        </h1>
         <div className="flex justify-between items-center mb-6">
           <input
             type="text"
@@ -105,7 +114,7 @@ const LeadManagementPage = () => {
         )}
         <button
           className="fixed bottom-8 right-8 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600"
-          onClick={() => navigate('/addLead')}
+          onClick={() => navigate("/addLead")}
         >
           + Add Lead
         </button>

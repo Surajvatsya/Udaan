@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const LeadRow = ({ lead }) => {
   const navigate = useNavigate();
@@ -14,9 +14,9 @@ const LeadRow = ({ lead }) => {
       <td className="border px-4 py-2">
         <span
           className={
-            lead.status === 'Active'
-              ? 'bg-green-200 text-green-700 px-2 py-1 rounded'
-              : 'bg-yellow-200 text-yellow-700 px-2 py-1 rounded'
+            lead.status === "Active"
+              ? "bg-green-200 text-green-700 px-2 py-1 rounded"
+              : "bg-yellow-200 text-yellow-700 px-2 py-1 rounded"
           }
         >
           {lead.status}

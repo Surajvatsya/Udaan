@@ -1,6 +1,6 @@
 // OrderTrendsChart.js
-import React from 'react';
-import { Line } from 'react-chartjs-2';
+import React from "react";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   LineElement,
@@ -9,19 +9,26 @@ import {
   PointElement,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from "chart.js";
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
+ChartJS.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend,
+);
 
 export const OrderTrendsChart = ({ orderData }) => {
   const data = {
     labels: orderData.map((entry) => entry.date), // Dates for x-axis
     datasets: [
       {
-        label: 'Orders',
+        label: "Orders",
         data: orderData.map((entry) => entry.count), // Order counts for y-axis
         fill: false,
-        borderColor: 'rgb(75, 192, 192)',
+        borderColor: "rgb(75, 192, 192)",
         tension: 0.1, // Line smoothness
       },
     ],
@@ -32,20 +39,20 @@ export const OrderTrendsChart = ({ orderData }) => {
     plugins: {
       legend: {
         display: true,
-        position: 'top',
+        position: "top",
       },
     },
     scales: {
       x: {
         title: {
           display: true,
-          text: 'Date',
+          text: "Date",
         },
       },
       y: {
         title: {
           display: true,
-          text: 'Number of Orders',
+          text: "Number of Orders",
         },
         beginAtZero: true,
       },

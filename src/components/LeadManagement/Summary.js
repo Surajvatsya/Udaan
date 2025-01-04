@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const Summary = ({ leads }) => {
   const totalLeads = leads.length;
-  const activeLeads = leads.filter((lead) => lead.status === 'Active').length;
+  const activeLeads = leads.filter((lead) => lead.status === "Active").length;
   // const todaysCalls = 12; // Mocked data
   const [todaysCalls, setTodaysCalls] = useState(0);
   const [error, setError] = useState(null);
@@ -10,15 +10,24 @@ const Summary = ({ leads }) => {
   useEffect(() => {
     const fetchTodaysCalls = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/interactions/today');
+        const token = localStorage.getItem("jwtToken");
+        const response = await fetch(
+          "http://localhost:3000/api/interactions/today",
+          {
+            headers: {
+              token,
+              "Content-Type": "application/json",
+            },
+          },
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch today\'s calls');
+          throw new Error("Failed to fetch today's calls");
         }
         const data = await response.json();
         setTodaysCalls(data.todaysCallsCount || 0);
       } catch (err) {
-        console.error('Error fetching today\'s calls:', err);
-        setError('Failed to fetch today\'s calls');
+        console.error("Error fetching today's calls:", err);
+        setError("Failed to fetch today's calls");
       }
     };
 

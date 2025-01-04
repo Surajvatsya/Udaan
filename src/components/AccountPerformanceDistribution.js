@@ -1,11 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Doughnut } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import React, { useEffect, useState } from "react";
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -19,21 +14,32 @@ export const AccountPerformanceDistribution = ({ timePeriod }) => {
     const fetchRevenueData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/api/leads/revenue_contribution?days=${timePeriod}`);
+        const token = localStorage.getItem("jwtToken");
+        const response = await fetch(
+          `http://localhost:3000/api/leads/revenue_contribution?days=${timePeriod}`,
+          {
+            headers: {
+              token: token,
+              "Content-Type": "application/json",
+            },
+          },
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch revenue contribution');
+          throw new Error("Failed to fetch revenue contribution");
         }
         const data = await response.json();
 
         // Extract labels and revenue data for the chart
         const newLabels = data.map((item) => item.restaurantName);
-        const newRevenueData = data.map((item) => parseFloat(item.totalRevenue));
+        const newRevenueData = data.map((item) =>
+          parseFloat(item.totalRevenue),
+        );
 
         setLabels(newLabels);
         setRevenueData(newRevenueData);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching revenue data:', err);
+        console.error("Error fetching revenue data:", err);
         setError(err.message);
         setLoading(false);
       }
@@ -47,8 +53,20 @@ export const AccountPerformanceDistribution = ({ timePeriod }) => {
     datasets: [
       {
         data: revenueData,
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FFA726'],
-        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FFA726'],
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4CAF50",
+          "#FFA726",
+        ],
+        hoverBackgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4CAF50",
+          "#FFA726",
+        ],
         borderWidth: 1,
       },
     ],
@@ -73,16 +91,20 @@ export const AccountPerformanceDistribution = ({ timePeriod }) => {
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (
-    <div className="bg-white p-6 rounded" style={{ height: '300px', width: '300px' }}>
+    <div
+      className="bg-white p-6 rounded"
+      style={{ height: "300px", width: "300px" }}
+    >
       <Doughnut data={chartData} options={options} />
     </div>
   );
 };
 
-
 export const TopPerformingAccounts = ({ accounts = [] }) => (
   <div className="bg-white p-4 rounded-lg shadow">
-    <h3 className="text-lg font-bold text-blue-900 mb-4">Top Performing Accounts</h3>
+    <h3 className="text-lg font-bold text-blue-900 mb-4">
+      Top Performing Accounts
+    </h3>
     <table className="w-full text-left">
       <thead>
         <tr>
@@ -111,7 +133,6 @@ export const TopPerformingAccounts = ({ accounts = [] }) => (
     </table>
   </div>
 );
-
 
 export const AtRiskAccounts = ({ accounts }) => (
   <div className="bg-white p-4 rounded-lg shadow">
@@ -150,4 +171,3 @@ export const TimePeriodSelector = ({ onChange }) => (
     <option value="365">Last Year</option>
   </select>
 );
-

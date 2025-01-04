@@ -1,17 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 const OrderDetailsPage = () => {
   const { order_id } = useParams();
   const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem("jwtToken");
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/order/${order_id}`);
-        if (!response.ok) throw new Error('Failed to fetch order details');
+        const response = await fetch(
+          `http://localhost:3000/api/order/get/${order_id}`,
+          {
+            method: "GET",
+            headers: {
+              token,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (!response.ok) throw new Error("Failed to fetch order details");
         const data = await response.json();
         // console.log("data", data);
         setOrderData(data[0]);
@@ -32,21 +42,21 @@ const OrderDetailsPage = () => {
 
   const handleDownload = () => {
     const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(orderData, null, 2)
+      JSON.stringify(orderData, null, 2),
     )}`;
-    const downloadAnchor = document.createElement('a');
+    const downloadAnchor = document.createElement("a");
     downloadAnchor.href = dataStr;
-    downloadAnchor.download = `order_${orderData?.order_id || 'unknown'}.json`;
+    downloadAnchor.download = `order_${orderData?.order_id || "unknown"}.json`;
     downloadAnchor.click();
   };
 
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
-  console.log("orderData",orderData);
+  if (!orderData)
+    return <p className="text-gray-500">No order details available.</p>;
+  console.log("orderData", orderData);
 
   return (
-
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-blue-100 flex items-center justify-center">
       <div className="w-4/5 max-w-4xl bg-white shadow-lg rounded-lg p-8 backdrop-filter backdrop-blur-lg">
         {/* Header Section */}
@@ -54,13 +64,18 @@ const OrderDetailsPage = () => {
           <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
             <span className="text-indigo-600 font-bold text-lg">O</span>
           </div>
-          <h1 className="ml-4 text-2xl font-bold text-gray-800">Order Details</h1>
+          <h1 className="ml-4 text-2xl font-bold text-gray-800">
+            Order Details
+          </h1>
         </div>
 
         {/* Order Info Cards */}
         <div className="grid grid-cols-3 gap-6 mb-6">
           <InfoCard title="Order ID" value={`#${orderData.order_id}`} />
-          <InfoCard title="Restaurant ID" value={`#${orderData.restaurant_id}`} />
+          <InfoCard
+            title="Restaurant ID"
+            value={`#${orderData.restaurant_id}`}
+          />
           <InfoCard
             title="Order Date"
             value={new Date(orderData.order_date).toLocaleDateString()}
@@ -72,10 +87,12 @@ const OrderDetailsPage = () => {
           <StatusBadge status={orderData.order_status} />
         </div>
 
-
         {/* Items Table */}
         <div className="mb-6">
-          <ItemsTable items={orderData.items || []}  totalAmount={orderData.total_amount || 0 }/>
+          <ItemsTable
+            items={orderData.items || []}
+            totalAmount={orderData.total_amount || 0}
+          />
         </div>
 
         {/* Action Buttons */}
@@ -99,7 +116,9 @@ const InfoCard = ({ title, value }) => (
 // StatusBadge Component
 const StatusBadge = ({ status }) => {
   const colorClass =
-    status === 'Delivered' ? 'text-green-500 bg-green-100' : 'text-gray-500 bg-gray-100';
+    status === "Delivered"
+      ? "text-green-500 bg-green-100"
+      : "text-gray-500 bg-gray-100";
   return (
     <div className={`flex items-center px-4 py-2 rounded-full ${colorClass}`}>
       <span className="w-2 h-2 rounded-full bg-current mr-2"></span>
@@ -142,8 +161,8 @@ const ActionButton = ({ label, primary }) => (
   <button
     className={`px-6 py-2 rounded-lg font-medium shadow transition ${
       primary
-        ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+        ? "bg-indigo-600 text-white hover:bg-indigo-700"
+        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
     }`}
   >
     {label}

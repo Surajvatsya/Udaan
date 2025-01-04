@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 // Header Component
 const Header = () => {
@@ -8,7 +8,9 @@ const Header = () => {
       <div className="absolute inset-0 w-full h-40 bg-opacity-30 bg-white transform rotate-3"></div>
       <div className="relative">
         <h1 className="text-4xl font-bold">Welcome to Udaan</h1>
-        <p className="mt-2 text-lg">Effortlessly manage leads, interactions, and account performance</p>
+        <p className="mt-2 text-lg">
+          Effortlessly manage leads, interactions, and account performance
+        </p>
       </div>
     </header>
   );
@@ -23,7 +25,9 @@ const FeatureCard = ({ title, description, gradient, onClick }) => {
     >
       <h2 className="text-2xl font-bold">{title}</h2>
       <p className="mt-2 text-sm">{description}</p>
-      <p className="mt-4 text-blue-200 underline cursor-pointer">Learn More →</p>
+      <p className="mt-4 text-blue-200 underline cursor-pointer">
+        Learn More →
+      </p>
     </div>
   );
 };
@@ -37,19 +41,19 @@ const Features = () => {
         title="Lead Management"
         description="Add and manage leads"
         gradient="from-blue-700 to-blue-500"
-        onClick={() => navigate('/leads')}
+        onClick={() => navigate("/leads")}
       />
       <FeatureCard
         title="POC"
         description="Add POCs and roles"
         gradient="from-green-700 to-green-500"
-        onClick={() => navigate('/contacts')}
+        onClick={() => navigate("/contacts")}
       />
       <FeatureCard
         title="Add an Interaction"
         description="Record calls and follow-ups"
         gradient="from-purple-700 to-purple-500"
-        onClick={() => navigate('/interaction')}
+        onClick={() => navigate("/interaction")}
       />
     </section>
   );
@@ -59,12 +63,12 @@ const Features = () => {
 const AccountPerformance = () => {
   const navigate = useNavigate();
   return (
-  <FeatureCard
-    title="Order"
-    description="Place an Order"
-    gradient="from-red-800 to-red-500"
-    onClick={() => navigate('/order')}
-  />
+    <FeatureCard
+      title="Order"
+      description="Place an Order"
+      gradient="from-red-800 to-red-500"
+      onClick={() => navigate("/order")}
+    />
   );
 };
 

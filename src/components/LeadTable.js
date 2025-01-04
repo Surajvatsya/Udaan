@@ -1,10 +1,10 @@
 // components/LeadTable.js
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const sampleLeads = [
-  { id: 1, name: 'John Doe', status: 'Active', callsToday: 3 },
-  { id: 2, name: 'Jane Smith', status: 'New', callsToday: 0 },
-  { id: 3, name: 'Michael Johnson', status: 'Active', callsToday: 2 },
+  { id: 1, name: "John Doe", status: "Active", callsToday: 3 },
+  { id: 2, name: "Jane Smith", status: "New", callsToday: 0 },
+  { id: 3, name: "Michael Johnson", status: "Active", callsToday: 2 },
 ];
 
 const LeadTable = () => {
@@ -22,15 +22,12 @@ const LeadTable = () => {
         </thead>
         <tbody>
           {leads.map((lead) => (
-            <tr
-              key={lead.id}
-              className="hover:bg-gray-100 transition"
-            >
+            <tr key={lead.id} className="hover:bg-gray-100 transition">
               <td className="p-3 border-b">{lead.name}</td>
               <td className="p-3 border-b">
                 <span
                   className={`inline-block px-3 py-1 rounded-full text-white text-sm ${
-                    lead.status === 'Active' ? 'bg-green-600' : 'bg-yellow-500'
+                    lead.status === "Active" ? "bg-green-600" : "bg-yellow-500"
                   }`}
                 >
                   {lead.status}

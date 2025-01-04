@@ -1,45 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-function AddLeadModal({ onClose }) {
+function AddContact({ onClose }) {
   const navigate = useNavigate();
-  const [restaurantName, setRestaurantName] = useState('');
-  const [restaurantType, setRestaurantType] = useState('');
-  const [leadStatus, setLeadStatus] = useState('');
-  const [primaryContactName, setPrimaryContactName] = useState('');
-  const [role, setRole] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [emailAddress, setEmailAddress] = useState('');
-  const [address, setAddress] = useState('');
-  const [notes, setNotes] = useState('');
-
-  // Sample loading and error states
+  const [role, setRole] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
+  const [restaurants, setRestaurants] = useState([]);
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState("");
+  const [pocName, setPocName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  // Sample data for selection fields
-  const restaurantTypes = ['Fast Food', 'Casual Dining', 'Fine Dining', 'Cafe'];
-  const leadStatuses = ['New', 'Contacted', 'Qualified', 'Converted'];
-
-  /**
-   * Simple form validation for required fields
-   * Returns an error message if any required field is empty.
-   */
   const validateForm = () => {
-    if (!restaurantName.trim()) return 'Restaurant Name is required';
-    // if (!restaurantType.trim()) return 'Restaurant Type is required';
-    // if (!leadStatus.trim()) return 'Lead Status is required';
-    if (!primaryContactName.trim()) return 'Primary Contact Name is required';
-    if (!role.trim()) return 'Role is required';
-    if (!phoneNumber.trim()) return 'Phone Number is required';
-    if (!address.trim()) return 'Address is required';
-    return '';
+    if (!pocName.trim()) return "POC Name is required";
+    if (!role.trim()) return "Role is required";
+    if (!phoneNumber.trim()) return "Phone Number is required";
+    return "";
   };
+
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem("jwtToken");
+        const response = await fetch("http://localhost:3000/api/leads", {
+          headers: {
+            token: token,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch restaurants");
+
+        const data = await response.json();
+        setRestaurants(data);
+        setIsLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError("Error fetching restaurants");
+        setIsLoading(false);
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
 
   /**
    * Handle form submission
    */
-  const handleAddLead = (e) => {
+  const handleAddPoc = async (e) => {
     e.preventDefault();
     const validationError = validateForm();
     if (validationError) {
@@ -47,28 +57,46 @@ function AddLeadModal({ onClose }) {
       return;
     }
 
-    setError('');
+    setError("");
     setIsLoading(true);
 
-    // Simulate an API request
-    setTimeout(() => {
-      alert('Lead Added Successfully!');
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const reqBody = {
+        restaurant_id: selectedRestaurantId,
+        name: pocName,
+        role,
+        phone_number: phoneNumber,
+        email: emailAddress,
+      };
+
+      const response = await fetch("http://localhost:3000/api/contacts", {
+        method: "POST",
+        headers: {
+          token: token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reqBody),
+      });
+
+      if (!response.ok) throw new Error("Failed to add POC");
+
+      alert("POC Added Successfully!");
       setIsLoading(false);
 
       // Reset form fields
-      setRestaurantName('');
-      setRestaurantType('');
-      setLeadStatus('');
-      setPrimaryContactName('');
-      setRole('');
-      setPhoneNumber('');
-      setEmailAddress('');
-      setAddress('');
-      setNotes('');
+      setSelectedRestaurantId("");
+      setPocName("");
+      setRole("");
+      setPhoneNumber("");
+      setEmailAddress("");
 
-      // You could also close the modal after successful submission
-      // onClose();
-    }, 1500);
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      setError("Error adding POC");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -77,7 +105,11 @@ function AddLeadModal({ onClose }) {
         {/* Modal Header */}
         <div style={styles.modalHeader}>
           <h2 style={styles.modalTitle}>Add POC</h2>
-          <button aria-label="Close" style={styles.closeButton} onClick={() => navigate('/')}>
+          <button
+            aria-label="Close"
+            style={styles.closeButton}
+            onClick={() => navigate("/")}
+          >
             &times;
           </button>
         </div>
@@ -93,43 +125,32 @@ function AddLeadModal({ onClose }) {
         )}
 
         {/* Form */}
-        <form style={styles.form} onSubmit={handleAddLead}>
+        <form style={styles.form} onSubmit={handleAddPoc}>
           {/* BASIC INFORMATION */}
           <section style={styles.section}>
             {/* <h3 style={styles.sectionTitle}>Basic Information</h3> */}
             <div style={styles.formRow}>
               <TextInput
                 label="Full Name*"
-                value={restaurantName}
-                onChange={(e) => setRestaurantName(e.target.value)}
-                placeholder="Enter the Poc name"
+                value={pocName}
+                onChange={(e) => setPocName(e.target.value)}
+                placeholder="Enter POC Name"
               />
             </div>
-            {/* <div style={styles.formRow}>
-              <SelectInput
-                label="Restaurant Type"
-                value={restaurantType}
-                onChange={(e) => setRestaurantType(e.target.value)}
-                options={restaurantTypes}
-              />
-              <SelectInput
-                label="Lead Status"
-                value={leadStatus}
-                onChange={(e) => setLeadStatus(e.target.value)}
-                options={leadStatuses}
-              />
-            </div> */}
           </section>
 
           {/* CONTACT INFORMATION */}
           <section style={styles.section}>
             {/* <h3 style={styles.sectionTitle}>Contact Information</h3> */}
             <div style={styles.formRow}>
-            <SelectInput
-                label="Restaurant Name*"
-                value={restaurantType}
-                onChange={(e) => setRestaurantType(e.target.value)}
-                options={restaurantTypes}
+              <SelectInput
+                label="Choose Restaurant"
+                value={selectedRestaurantId}
+                onChange={(e) => setSelectedRestaurantId(e.target.value)}
+                options={restaurants.map((r) => ({
+                  value: r.restaurant_id,
+                  label: r.name,
+                }))}
               />
               <TextInput
                 label="Role*"
@@ -181,11 +202,14 @@ function AddLeadModal({ onClose }) {
             <button
               type="button"
               style={{ ...styles.button, ...styles.cancelButton }}
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
             >
               Cancel
             </button>
-            <button type="submit" style={{ ...styles.button, ...styles.primaryButton }}>
+            <button
+              type="submit"
+              style={{ ...styles.button, ...styles.primaryButton }}
+            >
               Add Poc
             </button>
           </div>
@@ -198,8 +222,8 @@ function AddLeadModal({ onClose }) {
 /**
  * A reusable text input component.
  */
-function TextInput({ label, value, onChange, placeholder, type = 'text' }) {
-  const id = label.replace(/\s+/g, '_').toLowerCase(); // For associating label & input
+function TextInput({ label, value, onChange, placeholder, type = "text" }) {
+  const id = label.replace(/\s+/g, "_").toLowerCase(); // For associating label & input
   return (
     <div style={styles.inputContainer}>
       <label htmlFor={id} style={styles.label}>
@@ -221,7 +245,7 @@ function TextInput({ label, value, onChange, placeholder, type = 'text' }) {
  * A reusable select component.
  */
 function SelectInput({ label, value, onChange, options = [] }) {
-  const id = label.replace(/\s+/g, '_').toLowerCase();
+  const id = label.replace(/\s+/g, "_").toLowerCase();
   return (
     <div style={styles.inputContainer}>
       <label htmlFor={id} style={styles.label}>
@@ -230,8 +254,8 @@ function SelectInput({ label, value, onChange, options = [] }) {
       <select id={id} value={value} onChange={onChange} style={styles.select}>
         <option value="">Select...</option>
         {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
           </option>
         ))}
       </select>
@@ -239,181 +263,154 @@ function SelectInput({ label, value, onChange, options = [] }) {
   );
 }
 
-/**
- * A reusable textarea component.
- */
-function TextArea({ label, value, onChange, placeholder }) {
-  const id = label.replace(/\s+/g, '_').toLowerCase();
-  return (
-    <div style={styles.inputContainer}>
-      <label htmlFor={id} style={styles.label}>
-        {label}
-      </label>
-      <textarea
-        id={id}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        style={styles.textarea}
-        rows={3}
-      />
-    </div>
-  );
-}
-
-/**
- * Inline styling for simplicity.
- * In a production app, consider using a separate CSS/SCSS file,
- * CSS Modules, or a CSS-in-JS library (Styled Components, etc.).
- */
 const styles = {
   backdrop: {
-    position: 'fixed',
+    position: "fixed",
     top: 0,
     left: 0,
-    width: '100vw',
-    height: '100vh',
-    background: 'rgba(0, 0, 0, 0.5)',
+    width: "100vw",
+    height: "100vh",
+    background: "rgba(0, 0, 0, 0.5)",
     // Simple fade-in animation
-    animation: 'fadeIn 0.3s ease-in-out',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    animation: "fadeIn 0.3s ease-in-out",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     zIndex: 9999,
   },
   modalContainer: {
-    background: '#fff',
-    width: '90%',
-    maxWidth: '600px',
-    borderRadius: '8px',
-    padding: '1.5rem',
-    position: 'relative',
-    boxSizing: 'border-box',
-    maxHeight: '90vh',
-    overflowY: 'auto',
+    background: "#fff",
+    width: "90%",
+    maxWidth: "600px",
+    borderRadius: "8px",
+    padding: "1.5rem",
+    position: "relative",
+    boxSizing: "border-box",
+    maxHeight: "90vh",
+    overflowY: "auto",
     // Simple fade-in scaling
-    animation: 'scaleIn 0.3s ease-in-out',
+    animation: "scaleIn 0.3s ease-in-out",
   },
   modalHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: '1rem',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: "1rem",
   },
   modalTitle: {
     margin: 0,
-    fontSize: '1.25rem',
-    fontWeight: '600',
+    fontSize: "1.25rem",
+    fontWeight: "600",
   },
   closeButton: {
-    background: 'transparent',
-    border: 'none',
-    fontSize: '1.5rem',
-    cursor: 'pointer',
+    background: "transparent",
+    border: "none",
+    fontSize: "1.5rem",
+    cursor: "pointer",
     lineHeight: 1,
-    color: '#999',
-    transition: 'color 0.2s',
+    color: "#999",
+    transition: "color 0.2s",
   },
   errorAlert: {
-    backgroundColor: '#f8d7da',
-    color: '#721c24',
-    borderRadius: '4px',
-    padding: '0.75rem',
-    marginBottom: '1rem',
+    backgroundColor: "#f8d7da",
+    color: "#721c24",
+    borderRadius: "4px",
+    padding: "0.75rem",
+    marginBottom: "1rem",
   },
   loadingOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
-    width: 'calc(100% - 3rem)', // account for container padding
-    height: 'calc(100% - 3rem)',
-    background: 'rgba(255,255,255,0.7)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '8px',
+    width: "calc(100% - 3rem)", // account for container padding
+    height: "calc(100% - 3rem)",
+    background: "rgba(255,255,255,0.7)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "8px",
   },
   loadingText: {
-    fontWeight: 'bold',
-    fontSize: '1rem',
+    fontWeight: "bold",
+    fontSize: "1rem",
   },
   form: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
   },
   section: {
-    marginBottom: '1rem',
+    marginBottom: "1rem",
   },
   sectionTitle: {
-    fontSize: '1rem',
+    fontSize: "1rem",
     fontWeight: 600,
-    marginBottom: '0.5rem',
+    marginBottom: "0.5rem",
   },
   formRow: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '1rem',
-    marginBottom: '1rem',
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "1rem",
+    marginBottom: "1rem",
   },
   inputContainer: {
     flex: 1,
-    minWidth: '200px',
-    display: 'flex',
-    flexDirection: 'column',
+    minWidth: "200px",
+    display: "flex",
+    flexDirection: "column",
   },
   label: {
-    marginBottom: '0.25rem',
+    marginBottom: "0.25rem",
     fontWeight: 500,
-    fontSize: '0.9rem',
+    fontSize: "0.9rem",
   },
   input: {
-    padding: '0.5rem',
-    fontSize: '0.9rem',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    outline: 'none',
+    padding: "0.5rem",
+    fontSize: "0.9rem",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    outline: "none",
   },
   select: {
-    padding: '0.5rem',
-    fontSize: '0.9rem',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    outline: 'none',
+    padding: "0.5rem",
+    fontSize: "0.9rem",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    outline: "none",
   },
   textarea: {
-    padding: '0.5rem',
-    fontSize: '0.9rem',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    outline: 'none',
-    resize: 'vertical',
+    padding: "0.5rem",
+    fontSize: "0.9rem",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    outline: "none",
+    resize: "vertical",
   },
   actions: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    gap: '1rem',
-    marginTop: '1rem',
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "1rem",
+    marginTop: "1rem",
   },
   button: {
-    cursor: 'pointer',
-    padding: '0.6rem 1.2rem',
-    fontSize: '0.9rem',
-    borderRadius: '4px',
-    border: 'none',
-    transition: 'background-color 0.2s',
+    cursor: "pointer",
+    padding: "0.6rem 1.2rem",
+    fontSize: "0.9rem",
+    borderRadius: "4px",
+    border: "none",
+    transition: "background-color 0.2s",
   },
   cancelButton: {
-    backgroundColor: '#ccc',
-    color: '#333',
+    backgroundColor: "#ccc",
+    color: "#333",
   },
   primaryButton: {
-    backgroundColor: '#0d6efd',
-    color: '#fff',
+    backgroundColor: "#0d6efd",
+    color: "#fff",
   },
 };
 
 // Optional keyframe animations (could be in a CSS file)
-const fadeInStyle = document.createElement('style');
+const fadeInStyle = document.createElement("style");
 fadeInStyle.innerHTML = `
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -426,4 +423,4 @@ fadeInStyle.innerHTML = `
 `;
 document.head.appendChild(fadeInStyle);
 
-export default AddLeadModal;
+export default AddContact;

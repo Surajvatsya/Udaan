@@ -1,33 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useState, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from "react-router-dom";
 
 const CallManagementPage = () => {
   const [calls, setCalls] = useState([]);
   const [filteredCalls, setFilteredCalls] = useState([]);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem("jwtToken");
 
   useEffect(() => {
     const fetchCalls = async () => {
       try {
         setLoading(true);
         const params = new URLSearchParams();
-        if (fromDate) params.append('fromDate', fromDate.toISOString().split('T')[0]);
-        if (toDate) params.append('toDate', toDate.toISOString().split('T')[0]);
+        if (fromDate)
+          params.append("fromDate", fromDate.toISOString().split("T")[0]);
+        if (toDate) params.append("toDate", toDate.toISOString().split("T")[0]);
 
-        const response = await fetch(`http://localhost:3000/api/interactions?${params.toString()}`);
-        if (!response.ok) throw new Error('Failed to fetch call data');
+        const response = await fetch(
+          `http://localhost:3000/api/interactions?${params.toString()}`,
+          {
+            headers: {
+              token,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (!response.ok) throw new Error("Failed to fetch call data");
         const data = await response.json();
 
         // Combine and format calls
         const allCalls = [
-          ...data.overdueCalls.map((call) => ({ ...call, status: 'overdue' })),
-          ...data.todaysCalls.map((call) => ({ ...call, status: 'today' })),
-          ...data.upcomingCalls.map((call) => ({ ...call, status: 'upcoming' })),
+          ...data.overdueCalls.map((call) => ({ ...call, status: "overdue" })),
+          ...data.todaysCalls.map((call) => ({ ...call, status: "today" })),
+          ...data.upcomingCalls.map((call) => ({
+            ...call,
+            status: "upcoming",
+          })),
         ];
         setCalls(allCalls);
         setFilteredCalls(allCalls);
@@ -48,7 +62,7 @@ const CallManagementPage = () => {
     const filtered = calls.filter(
       (call) =>
         call.poc_name.toLowerCase().includes(query) ||
-        call.restaurant_name.toLowerCase().includes(query)
+        call.restaurant_name.toLowerCase().includes(query),
     );
     setFilteredCalls(filtered);
   };
@@ -116,48 +130,92 @@ const CallManagementPage = () => {
 const CallSection = ({ title, status, calls, searchQuery, onSearch }) => {
   // Filter calls based on status
   const statusCalls = calls.filter((call) => call.status === status);
+  const navigate = useNavigate();
 
   // Status styles
   const statusColors = {
-    overdue: 'bg-red-100 text-red-500',
-    today: 'bg-gray-900 text-white',
-    upcoming: 'bg-blue-100 text-blue-500',
+    overdue: "bg-red-100 text-red-500",
+    today: "bg-gray-900 text-white",
+    upcoming: "bg-blue-100 text-blue-500",
+  };
+
+  // Handle Call Button Click
+  const handleCallClick = (call) => {
+    navigate("/interaction", { state: { call } });
   };
 
   return (
     <div className="p-4 bg-white rounded shadow">
+      {/* Section Title */}
       <h2 className="text-lg font-semibold text-gray-800 mb-4">{title}</h2>
+
+      {/* Search Input */}
       <input
         type="text"
         placeholder="Search calls..."
         value={searchQuery}
         onChange={onSearch}
-        className="w-full mb-4 p-2 border border-gray-300 rounded"
+        className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-indigo-300"
       />
+
+      {/* Calls List */}
       <div className="space-y-4">
-        {statusCalls.map((call) => (
-          <div
-            key={call.id}
-            className="flex items-center justify-between p-3 border border-gray-200 rounded hover:bg-gray-50"
-          >
-            <div>
-              <h3 className="text-gray-900 font-medium">{call.poc_name}</h3>
-              <p className="text-sm text-gray-500">
-                {call.follow_up_date.split('T')[0]} at {call.last_call_details}
-              </p>
+        {statusCalls.length > 0 ? (
+          statusCalls.map((call, index) => (
+            <div
+              key={index}
+              className="p-4 border rounded-lg shadow-md bg-gray-50 hover:bg-gray-100 transition"
+            >
+              <div className="flex flex-col md:flex-row md:justify-between">
+                {/* Left Section */}
+                <div className="mb-2 md:mb-0">
+                  <h3 className="text-xl font-bold text-gray-800">
+                    {call.restaurant_name}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    POC: {call.poc_name} | Contact: {call.poc_contact}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Follow-up:{" "}
+                    {new Date(call.follow_up_date).toLocaleDateString()}
+                  </p>
+                </div>
+
+                {/* Right Section */}
+                <div className="flex flex-col md:items-end space-y-2">
+                  <span
+                    className={`px-4 py-1 text-sm rounded-full font-medium ${statusColors[status]}`}
+                  >
+                    {status}
+                  </span>
+                  <button
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                    onClick={() => handleCallClick(call)}
+                  >
+                    Call
+                  </button>
+                </div>
+              </div>
+
+              {/* Details Section */}
+              {call.last_call_details && (
+                <div className="mt-2 p-2 bg-gray-100 rounded-md">
+                  <p className="text-sm text-gray-700">
+                    <strong>Details:</strong> {call.last_call_details}
+                  </p>
+                  <p className="text-sm text-gray-700">
+                    <strong>Outcome:</strong>{" "}
+                    {call.last_call_outcome || "No outcome recorded"}
+                  </p>
+                </div>
+              )}
             </div>
-            <div className="flex items-center space-x-3">
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[status]}`}
-              >
-                {status}
-              </span>
-              <button className="bg-gray-200 text-gray-600 px-3 py-1 rounded hover:bg-gray-300">
-                Call
-              </button>
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-sm text-gray-600">
+            No calls available for this status.
+          </p>
+        )}
       </div>
     </div>
   );

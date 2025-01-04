@@ -1,33 +1,55 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 const StatsCards = () => {
   const [stats, setStats] = useState([
-    { id: 1, title: 'Total Leads', value: 0 },
-    { id: 2, title: 'Active Leads', value: 0 },
+    { id: 1, title: "Total Leads", value: 0 },
+    { id: 2, title: "Active Leads", value: 0 },
     { id: 3, title: "Today's Calls", value: 0 },
   ]);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        const token = localStorage.getItem("jwtToken");
         // Fetch Total Leads and Active Leads
-        const leadsResponse = await fetch('http://localhost:3000/api/leads/stats');
-        if (!leadsResponse.ok) throw new Error('Failed to fetch leads stats');
+        const leadsResponse = await fetch(
+          "http://localhost:3000/api/leads/stats",
+          {
+            headers: {
+              token: token,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (!leadsResponse.ok) throw new Error("Failed to fetch leads stats");
         const leadsData = await leadsResponse.json();
 
         // Fetch Today's Calls
-        const callsResponse = await fetch('http://localhost:3000/api/interactions/today');
-        if (!callsResponse.ok) throw new Error("Failed to fetch today's calls stats");
+        const callsResponse = await fetch(
+          "http://localhost:3000/api/interactions/today",
+          {
+            headers: {
+              token: token,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (!callsResponse.ok)
+          throw new Error("Failed to fetch today's calls stats");
         const callsData = await callsResponse.json();
 
         // Update stats with fetched values
         setStats([
-          { id: 1, title: 'Total Leads', value: leadsData.totalLeads || 0 },
-          { id: 2, title: 'Active Leads', value: leadsData.activeLeads || 0 },
-          { id: 3, title: "Today's Calls", value: callsData.todaysCallsCount || 0 },
+          { id: 1, title: "Total Leads", value: leadsData.totalLeads || 0 },
+          { id: 2, title: "Active Leads", value: leadsData.activeLeads || 0 },
+          {
+            id: 3,
+            title: "Today's Calls",
+            value: callsData.todaysCallsCount || 0,
+          },
         ]);
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error("Error fetching stats:", error);
       }
     };
 

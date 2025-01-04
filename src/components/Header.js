@@ -37,13 +37,15 @@
 //   )
 // }
 
-import React from 'react';
+import React from "react";
 
 const Header = () => {
   return (
     <div className="flex justify-between items-center p-6 bg-white shadow-md">
       <h2 className="text-2xl font-semibold text-blue-900">Welcome Back!</h2>
-      <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition">Add Lead</button>
+      <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition">
+        Add Lead
+      </button>
     </div>
   );
 };

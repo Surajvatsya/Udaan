@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/LeadDetails.css";
 
-
 function LeadDetails({ leadId }) {
   const [lead, setLead] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,7 +9,16 @@ function LeadDetails({ leadId }) {
   useEffect(() => {
     async function fetchLeadDetails() {
       try {
-        const response = await fetch(`http://your-backend-api/leads/${leadId}`);
+        const token = localStorage.getItem("jwtToken");
+        const response = await fetch(
+          `http://your-backend-api/leads/${leadId}`,
+          {
+            headers: {
+              token,
+              "Content-Type": "application/json",
+            },
+          },
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch lead details.");
         }
@@ -38,9 +46,15 @@ function LeadDetails({ leadId }) {
     <div className="lead-details">
       <h2>Lead Details</h2>
       <div className="lead-info">
-        <p><strong>Name:</strong> {lead.name}</p>
-        <p><strong>Status:</strong> {lead.status}</p>
-        <p><strong>Description:</strong> {lead.description}</p>
+        <p>
+          <strong>Name:</strong> {lead.name}
+        </p>
+        <p>
+          <strong>Status:</strong> {lead.status}
+        </p>
+        <p>
+          <strong>Description:</strong> {lead.description}
+        </p>
       </div>
 
       <div className="lead-contacts">
@@ -49,7 +63,8 @@ function LeadDetails({ leadId }) {
           <ul>
             {lead.contacts.map((contact) => (
               <li key={contact.id}>
-                <strong>{contact.name}</strong> - {contact.role} - {contact.phone}
+                <strong>{contact.name}</strong> - {contact.role} -{" "}
+                {contact.phone}
               </li>
             ))}
           </ul>
@@ -64,8 +79,12 @@ function LeadDetails({ leadId }) {
           <ul>
             {lead.interactions.map((interaction) => (
               <li key={interaction.id}>
-                <p><strong>Date:</strong> {interaction.date}</p>
-                <p><strong>Details:</strong> {interaction.details}</p>
+                <p>
+                  <strong>Date:</strong> {interaction.date}
+                </p>
+                <p>
+                  <strong>Details:</strong> {interaction.details}
+                </p>
               </li>
             ))}
           </ul>
