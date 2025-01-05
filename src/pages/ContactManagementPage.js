@@ -8,7 +8,7 @@ function ContactManagementPage() {
     // Fetch contacts from the backend
     async function fetchContacts() {
       const token = localStorage.getItem("jwtToken");
-      const response = await fetch("http://13.127.185.23:3000/api/contacts", {
+      const response = await fetch("http://13.127.185.23:4000/api/contacts", {
         headers: {
           token,
           "Content-Type": "application/json",

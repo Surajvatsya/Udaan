@@ -40,7 +40,7 @@ const RestaurantDetailsPage = () => {
     const fetchRestaurantDetails = async () => {
       try {
         const response = await fetch(
-          `http://13.127.185.23:3000/api/leads/${id}`,
+          `http://13.127.185.23:4000/api/leads/${id}`,
           {
             method: "GET",
             headers: {
@@ -72,7 +72,7 @@ const RestaurantDetailsPage = () => {
     const fetchPocData = async () => {
       try {
         const response = await fetch(
-          `http://13.127.185.23:3000/api/contacts/${id}`,
+          `http://13.127.185.23:4000/api/contacts/${id}`,
           {
             method: "GET",
             headers: {
@@ -98,7 +98,7 @@ const RestaurantDetailsPage = () => {
     const fetchHeatmapData = async () => {
       try {
         const response = await fetch(
-          `http://13.127.185.23:3000/api/order/heatmap/${id}`,
+          `http://13.127.185.23:4000/api/order/heatmap/${id}`,
           {
             method: "GET",
             headers: {
@@ -124,7 +124,7 @@ const RestaurantDetailsPage = () => {
     const fetchTimelineData = async () => {
       try {
         const response = await fetch(
-          `http://13.127.185.23:3000/api/interactions/${id}`,
+          `http://13.127.185.23:4000/api/interactions/${id}`,
           {
             method: "GET",
             headers: {
@@ -145,7 +145,7 @@ const RestaurantDetailsPage = () => {
     const fetchOrderData = async () => {
       try {
         const response = await fetch(
-          `http://13.127.185.23:3000/api/order/${id}`,
+          `http://13.127.185.23:4000/api/order/${id}`,
           {
             method: "GET",
             headers: {

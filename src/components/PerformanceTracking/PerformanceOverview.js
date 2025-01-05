@@ -37,7 +37,7 @@ const PerformanceTrackingPage = () => {
         setLoading(true);
 
         const orderResponse = await fetch(
-          `http://13.127.185.23:3000/api/order/stats?days=${timePeriod}`,
+          `http://13.127.185.23:4000/api/order/stats?days=${timePeriod}`,
           {
             headers: {
               token,
@@ -49,7 +49,7 @@ const PerformanceTrackingPage = () => {
         const orderData = await orderResponse.json();
 
         const accountResponse = await fetch(
-          `http://13.127.185.23:3000/api/leads/data?days=${timePeriod}`,
+          `http://13.127.185.23:4000/api/leads/data?days=${timePeriod}`,
           {
             headers: {
               token,
@@ -79,7 +79,7 @@ const PerformanceTrackingPage = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://13.127.185.23:3000/api/leads/perf?days=${timePeriod}`,
+          `http://13.127.185.23:4000/api/leads/perf?days=${timePeriod}`,
           {
             headers: {
               token,
@@ -111,7 +111,7 @@ const PerformanceTrackingPage = () => {
     const fetchOrderTrends = async () => {
       try {
         const response = await fetch(
-          `http://13.127.185.23:3000/api/order/trends?days=${timePeriod}`,
+          `http://13.127.185.23:4000/api/order/trends?days=${timePeriod}`,
           {
             headers: {
               token,

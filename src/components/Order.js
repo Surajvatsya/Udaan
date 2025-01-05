@@ -23,7 +23,7 @@ function AddLeadModal({ onClose }) {
     const fetchRestaurants = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
-        const response = await fetch("http://13.127.185.23:3000/api/leads", {
+        const response = await fetch("http://13.127.185.23:4000/api/leads", {
           headers: {
             token,
             "Content-Type": "application/json",
@@ -48,7 +48,7 @@ function AddLeadModal({ onClose }) {
       try {
         const token = localStorage.getItem("jwtToken");
         const response = await fetch(
-          `http://13.127.185.23:3000/api/contacts/${selectedRestaurantId}`,
+          `http://13.127.185.23:4000/api/contacts/${selectedRestaurantId}`,
           {
             headers: {
               token,
@@ -108,7 +108,7 @@ function AddLeadModal({ onClose }) {
 
     try {
       const token = localStorage.getItem("jwtToken");
-      const response = await fetch("http://13.127.185.23:3000/api/order", {
+      const response = await fetch("http://13.127.185.23:4000/api/order", {
         method: "POST",
         headers: {
           token,

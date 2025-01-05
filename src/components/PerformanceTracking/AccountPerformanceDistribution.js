@@ -16,7 +16,7 @@ export const AccountPerformanceDistribution = ({ timePeriod }) => {
         setLoading(true);
         const token = localStorage.getItem("jwtToken");
         const response = await fetch(
-          `http://13.127.185.23:3000/api/leads/revenue_contribution?days=${timePeriod}`,
+          `http://13.127.185.23:4000/api/leads/revenue_contribution?days=${timePeriod}`,
           {
             headers: {
               token: token,

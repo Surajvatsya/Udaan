@@ -44,7 +44,7 @@ function AddInteraction() {
       try {
         setIsLoading(true);
         const token = localStorage.getItem("jwtToken");
-        const response = await fetch("http://13.127.185.23:3000/api/leads", {
+        const response = await fetch("http://13.127.185.23:4000/api/leads", {
           headers: {
             token,
             "Content-Type": "application/json",
@@ -72,7 +72,7 @@ function AddInteraction() {
       try {
         const token = localStorage.getItem("jwtToken");
         const response = await fetch(
-          `http://13.127.185.23:3000/api/contacts/${selectedRestaurantId}`,
+          `http://13.127.185.23:4000/api/contacts/${selectedRestaurantId}`,
           {
             headers: {
               token,
@@ -113,7 +113,7 @@ function AddInteraction() {
       const token = localStorage.getItem("jwtToken");
 
       const response = await fetch(
-        "http://13.127.185.23:3000/api/interactions",
+        "http://13.127.185.23:4000/api/interactions",
         {
           method: "POST",
           headers: {

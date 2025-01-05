@@ -27,7 +27,7 @@ function AddContact({ onClose }) {
       try {
         setIsLoading(true);
         const token = localStorage.getItem("jwtToken");
-        const response = await fetch("http://13.127.185.23:3000/api/leads", {
+        const response = await fetch("http://13.127.185.23:4000/api/leads", {
           headers: {
             token,
             "Content-Type": "application/json",
@@ -70,7 +70,7 @@ function AddContact({ onClose }) {
         email: emailAddress,
       };
 
-      const response = await fetch("http://13.127.185.23:3000/api/contacts", {
+      const response = await fetch("http://13.127.185.23:4000/api/contacts", {
         method: "POST",
         headers: {
           token,

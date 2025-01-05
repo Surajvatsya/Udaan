@@ -12,7 +12,7 @@ const OrderDetailsPage = () => {
     const fetchOrderDetails = async () => {
       try {
         const response = await fetch(
-          `http://13.127.185.23:3000/api/order/get/${order_id}`,
+          `http://13.127.185.23:4000/api/order/get/${order_id}`,
           {
             method: "GET",
             headers: {
