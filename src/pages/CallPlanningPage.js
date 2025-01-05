@@ -23,7 +23,7 @@ const CallManagementPage = () => {
         if (toDate) params.append("toDate", toDate.toISOString().split("T")[0]);
 
         const response = await fetch(
-          `http://localhost:3000/api/interactions?${params.toString()}`,
+          `http://13.127.185.23:3000/api/interactions?${params.toString()}`,
           {
             headers: {
               token,

@@ -39,13 +39,16 @@ const RestaurantDetailsPage = () => {
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/leads/${id}`, {
-          method: "GET",
-          headers: {
-            token,
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `http://13.127.185.23:3000/api/leads/${id}`,
+          {
+            method: "GET",
+            headers: {
+              token,
+              "Content-Type": "application/json",
+            },
           },
-        });
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch restaurant details");
         }
@@ -69,7 +72,7 @@ const RestaurantDetailsPage = () => {
     const fetchPocData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/contacts/${id}`,
+          `http://13.127.185.23:3000/api/contacts/${id}`,
           {
             method: "GET",
             headers: {
@@ -95,7 +98,7 @@ const RestaurantDetailsPage = () => {
     const fetchHeatmapData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/order/heatmap/${id}`,
+          `http://13.127.185.23:3000/api/order/heatmap/${id}`,
           {
             method: "GET",
             headers: {
@@ -121,7 +124,7 @@ const RestaurantDetailsPage = () => {
     const fetchTimelineData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/interactions/${id}`,
+          `http://13.127.185.23:3000/api/interactions/${id}`,
           {
             method: "GET",
             headers: {
@@ -141,13 +144,16 @@ const RestaurantDetailsPage = () => {
     };
     const fetchOrderData = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/order/${id}`, {
-          method: "GET",
-          headers: {
-            token,
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `http://13.127.185.23:3000/api/order/${id}`,
+          {
+            method: "GET",
+            headers: {
+              token,
+              "Content-Type": "application/json",
+            },
           },
-        });
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch order data");
         }
@@ -164,8 +170,6 @@ const RestaurantDetailsPage = () => {
     fetchTimelineData();
   }, [id]);
 
-
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
@@ -175,7 +179,6 @@ const RestaurantDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-
       {/* Restaurant Info Card */}
       <div className="sticky top-0 z-10 bg-blue-500 text-white p-6 shadow-md">
         <div className="flex flex-col items-center">

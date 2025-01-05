@@ -18,7 +18,6 @@ function AddLeadModal() {
   const restaurantTypes = ["Fast Food", "Casual Dining", "Fine Dining", "Cafe"];
   const leadStatuses = ["New", "Contacted", "Qualified", "Converted"];
 
-
   const validateForm = () => {
     if (!restaurantName.trim()) return "Restaurant Name is required";
     if (!primaryContactName.trim()) return "Primary Contact Name is required";
@@ -27,7 +26,6 @@ function AddLeadModal() {
     if (!address.trim()) return "Address is required";
     return "";
   };
-
 
   const handleAddLead = (e) => {
     e.preventDefault();

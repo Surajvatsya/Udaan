@@ -10,7 +10,7 @@ export const SignUpPage = () => {
     //   return;
     // }
 
-    const response = await fetch("http://localhost:3000/api/auth/signup", {
+    const response = await fetch("http://13.127.185.23:3000/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password, role: "Key Manager" }),
@@ -96,7 +96,7 @@ export const SignInPage = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const response = await fetch("http://localhost:3000/api/auth/signin", {
+    const response = await fetch("http://13.127.185.23:3000/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

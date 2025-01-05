@@ -39,13 +39,12 @@ function AddInteraction() {
     "Complaint Handling",
   ];
 
-
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
         setIsLoading(true);
         const token = localStorage.getItem("jwtToken");
-        const response = await fetch("http://localhost:3000/api/leads", {
+        const response = await fetch("http://13.127.185.23:3000/api/leads", {
           headers: {
             token,
             "Content-Type": "application/json",
@@ -66,7 +65,6 @@ function AddInteraction() {
     fetchRestaurants();
   }, []);
 
-
   useEffect(() => {
     const fetchPocs = async () => {
       if (!selectedRestaurantId) return;
@@ -74,13 +72,13 @@ function AddInteraction() {
       try {
         const token = localStorage.getItem("jwtToken");
         const response = await fetch(
-          `http://localhost:3000/api/contacts/${selectedRestaurantId}`,
+          `http://13.127.185.23:3000/api/contacts/${selectedRestaurantId}`,
           {
             headers: {
               token,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         if (!response.ok) throw new Error("Failed to fetch POCs");
@@ -95,14 +93,12 @@ function AddInteraction() {
     fetchPocs();
   }, [selectedRestaurantId]);
 
-
   const validateForm = () => {
     if (!interactionTitle.trim()) return "Interaction Title is required";
     if (!selectedRestaurantId) return "Restaurant selection is required";
     if (!selectedPocId) return "POC selection is required";
     return "";
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -116,23 +112,26 @@ function AddInteraction() {
       setIsLoading(true);
       const token = localStorage.getItem("jwtToken");
 
-      const response = await fetch("http://localhost:3000/api/interactions", {
-        method: "POST",
-        headers: {
-          token,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "http://13.127.185.23:3000/api/interactions",
+        {
+          method: "POST",
+          headers: {
+            token,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            restaurant_id: selectedRestaurantId,
+            interaction_title: interactionTitle,
+            poc_id: selectedPocId,
+            interaction_type: interactionType,
+            details,
+            outcome,
+            interaction_date: interactionDate.toISOString(),
+            follow_up_date: followUpDate.toISOString(),
+          }),
         },
-        body: JSON.stringify({
-          restaurant_id: selectedRestaurantId,
-          interaction_title: interactionTitle,
-          poc_id: selectedPocId,
-          interaction_type: interactionType,
-          details,
-          outcome,
-          interaction_date: interactionDate.toISOString(),
-          follow_up_date: followUpDate.toISOString(),
-        }),
-      });
+      );
 
       if (!response.ok) throw new Error("Failed to create interaction");
 
@@ -236,7 +235,6 @@ function AddInteraction() {
             </div>
           </section>
 
-
           <section className="section">
             <h3 className="section-title">Details</h3>
             <div className="form-row">
@@ -257,9 +255,11 @@ function AddInteraction() {
             </div>
           </section>
 
-
           <div className="actions">
-            <button className="button cancel-button" onClick={() => navigate("/")}>
+            <button
+              className="button cancel-button"
+              onClick={() => navigate("/")}
+            >
               Cancel
             </button>
             <button type="submit" className="button primary-button">
@@ -273,7 +273,6 @@ function AddInteraction() {
 }
 
 export default AddInteraction;
-
 
 function SelectInput({ label, value, onChange, options = [] }) {
   return (

@@ -23,7 +23,7 @@ function AddLeadModal({ onClose }) {
     const fetchRestaurants = async () => {
       try {
         const token = localStorage.getItem("jwtToken");
-        const response = await fetch("http://localhost:3000/api/leads", {
+        const response = await fetch("http://13.127.185.23:3000/api/leads", {
           headers: {
             token,
             "Content-Type": "application/json",
@@ -32,7 +32,7 @@ function AddLeadModal({ onClose }) {
         if (!response.ok) throw new Error("Failed to fetch restaurants");
         const data = await response.json();
         setRestaurants(
-          data.map((r) => ({ value: r.restaurant_id, label: r.name }))
+          data.map((r) => ({ value: r.restaurant_id, label: r.name })),
         );
       } catch (err) {
         setError("Error fetching restaurants");
@@ -48,13 +48,13 @@ function AddLeadModal({ onClose }) {
       try {
         const token = localStorage.getItem("jwtToken");
         const response = await fetch(
-          `http://localhost:3000/api/contacts/${selectedRestaurantId}`,
+          `http://13.127.185.23:3000/api/contacts/${selectedRestaurantId}`,
           {
             headers: {
               token,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
         if (!response.ok) throw new Error("Failed to fetch POCs");
         const data = await response.json();
@@ -108,7 +108,7 @@ function AddLeadModal({ onClose }) {
 
     try {
       const token = localStorage.getItem("jwtToken");
-      const response = await fetch("http://localhost:3000/api/order", {
+      const response = await fetch("http://13.127.185.23:3000/api/order", {
         method: "POST",
         headers: {
           token,
@@ -196,7 +196,11 @@ function AddLeadModal({ onClose }) {
           <section className="section">
             <h3 className="section-title">Order Items</h3>
             {items.map((item, index) => (
-              <div key={index} className="item-container" style={{ position: "relative" }}>
+              <div
+                key={index}
+                className="item-container"
+                style={{ position: "relative" }}
+              >
                 <button
                   type="button"
                   aria-label="Remove item"
@@ -264,10 +268,7 @@ function AddLeadModal({ onClose }) {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="button primary-button"
-            >
+            <button type="submit" className="button primary-button">
               Place Order
             </button>
           </div>

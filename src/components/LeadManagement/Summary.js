@@ -11,7 +11,7 @@ const Summary = ({ leads }) => {
       try {
         const token = localStorage.getItem("jwtToken");
         const response = await fetch(
-          "http://localhost:3000/api/interactions/today",
+          "http://13.127.185.23:3000/api/interactions/today",
           {
             headers: {
               token,
