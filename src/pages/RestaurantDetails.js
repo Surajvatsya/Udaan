@@ -3,8 +3,6 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
-import { Pie } from "react-chartjs-2";
-import { Bar } from "react-chartjs-2";
 
 import {
   Chart as ChartJS,
@@ -166,34 +164,7 @@ const RestaurantDetailsPage = () => {
     fetchTimelineData();
   }, [id]);
 
-  // const heatmapData = [
-  //   { date: '2024-12-01', count: 3 },
-  //   { date: '2024-12-05', count: 5 },
-  //   { date: '2024-12-10', count: 8 },
-  //   { date: '2024-12-15', count: 1 },
-  //   { date: '2024-12-20', count: 7 },
-  // ];
 
-  const callOutcomeData = {
-    labels: ["Orders Placed", "Follow-ups", "No Response"],
-    datasets: [
-      {
-        data: [30, 50, 20],
-        backgroundColor: ["#4CAF50", "#FFC107", "#F44336"],
-      },
-    ],
-  };
-
-  const revenueData = {
-    labels: ["Beverages", "Meals", "Snacks", "Desserts"],
-    datasets: [
-      {
-        label: "Revenue (₹)",
-        data: [50000, 120000, 40000, 30000],
-        backgroundColor: ["#2196F3", "#4CAF50", "#FFC107", "#F44336"],
-      },
-    ],
-  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
@@ -204,9 +175,6 @@ const RestaurantDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* <div className="bg-white border-b p-6">
-        <h1 className="text-2xl font-bold text-gray-900">Restaurant Details</h1>
-      </div> */}
 
       {/* Restaurant Info Card */}
       <div className="sticky top-0 z-10 bg-blue-500 text-white p-6 shadow-md">

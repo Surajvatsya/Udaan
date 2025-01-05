@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 const Summary = ({ leads }) => {
   const totalLeads = leads.length;
   const activeLeads = leads.filter((lead) => lead.status === "Active").length;
-  // const todaysCalls = 12; // Mocked data
   const [todaysCalls, setTodaysCalls] = useState(0);
   const [error, setError] = useState(null);
 

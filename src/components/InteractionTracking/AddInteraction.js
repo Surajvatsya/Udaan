@@ -2,25 +2,22 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import "../../styles/global.css";
 
-function AddLeadModal({ onClose }) {
+function AddInteraction() {
   const navigate = useNavigate();
-  const [restaurantName, setRestaurantName] = useState("");
-  const [address, setAddress] = useState("");
-  const [notes, setNotes] = useState("");
-  const [interactionDate, setInteractionDate] = useState(new Date());
-  const [followUpDate, setFollowUpDate] = useState(new Date());
-  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [pocs, setPocs] = useState([]);
   const [interactionTitle, setInteractionTitle] = useState("");
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState("");
   const [selectedPocId, setSelectedPocId] = useState("");
   const [interactionType, setInteractionType] = useState("");
   const [details, setDetails] = useState("");
   const [outcome, setOutcome] = useState("");
+  const [interactionDate, setInteractionDate] = useState(new Date());
+  const [followUpDate, setFollowUpDate] = useState(new Date());
   const [restaurants, setRestaurants] = useState([]);
+  const [pocs, setPocs] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const interactionTypes = [
     "Phone Call",
@@ -41,17 +38,16 @@ function AddLeadModal({ onClose }) {
     "Billing/Payment Discussion",
     "Complaint Handling",
   ];
+
+
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
         setIsLoading(true);
-
-        // Fetch token from localStorage or any secure storage
-        // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InN1cmFqMy5nbWFpbC5jb20iLCJyb2xlIjoia20ucm9sZTEiLCJpYXQiOjE3MzU5NTEwMTMsImV4cCI6MTczNjIxMDIxM30.7wX8ShxYl8BxqMx0rh0YQPUOww8JE6sjNCMyG6VEGE4"
         const token = localStorage.getItem("jwtToken");
         const response = await fetch("http://localhost:3000/api/leads", {
           headers: {
-            token: token,
+            token,
             "Content-Type": "application/json",
           },
         });
@@ -60,10 +56,9 @@ function AddLeadModal({ onClose }) {
 
         const data = await response.json();
         setRestaurants(data);
-        setIsLoading(false);
       } catch (err) {
-        console.error(err);
         setError("Error fetching restaurants");
+      } finally {
         setIsLoading(false);
       }
     };
@@ -71,22 +66,21 @@ function AddLeadModal({ onClose }) {
     fetchRestaurants();
   }, []);
 
-  // Fetch POCs based on the selected restaurant
+
   useEffect(() => {
-    const fetchPOCs = async () => {
+    const fetchPocs = async () => {
       if (!selectedRestaurantId) return;
 
       try {
-        // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InN1cmFqMy5nbWFpbC5jb20iLCJyb2xlIjoia20ucm9sZTEiLCJpYXQiOjE3MzU5NTEwMTMsImV4cCI6MTczNjIxMDIxM30.7wX8ShxYl8BxqMx0rh0YQPUOww8JE6sjNCMyG6VEGE4"
         const token = localStorage.getItem("jwtToken");
         const response = await fetch(
           `http://localhost:3000/api/contacts/${selectedRestaurantId}`,
           {
             headers: {
-              token: token,
+              token,
               "Content-Type": "application/json",
             },
-          },
+          }
         );
 
         if (!response.ok) throw new Error("Failed to fetch POCs");
@@ -94,37 +88,33 @@ function AddLeadModal({ onClose }) {
         const data = await response.json();
         setPocs(data);
       } catch (err) {
-        console.error(err);
         setError("Error fetching POCs");
       }
     };
 
-    fetchPOCs();
+    fetchPocs();
   }, [selectedRestaurantId]);
 
+
   const validateForm = () => {
-    if (!restaurantName.trim()) return "Restaurant Name is required";
+    if (!interactionTitle.trim()) return "Interaction Title is required";
+    if (!selectedRestaurantId) return "Restaurant selection is required";
+    if (!selectedPocId) return "POC selection is required";
     return "";
   };
-  // Handle restaurant selection
-  const handleRestaurantChange = (e) => {
-    const selectedRestaurant = restaurants.find(
-      (r) => r.name === e.target.value,
-    );
-    if (selectedRestaurant) {
-      setSelectedRestaurantId(selectedRestaurant.restaurant_id);
-    }
-    setRestaurantName(e.target.value);
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
 
     try {
-      // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InN1cmFqMy5nbWFpbC5jb20iLCJyb2xlIjoia20ucm9sZTEiLCJpYXQiOjE3MzU5NTEwMTMsImV4cCI6MTczNjIxMDIxM30.7wX8ShxYl8BxqMx0rh0YQPUOww8JE6sjNCMyG6VEGE4"
+      setIsLoading(true);
       const token = localStorage.getItem("jwtToken");
-      console.log("selectedRestaurantId", selectedRestaurantId);
-      console.log("poc_id", selectedPocId);
 
       const response = await fetch("http://localhost:3000/api/interactions", {
         method: "POST",
@@ -149,7 +139,6 @@ function AddLeadModal({ onClose }) {
       alert("Interaction Recorded Successfully!");
       navigate("/");
     } catch (err) {
-      console.error(err);
       setError("Error creating interaction");
     } finally {
       setIsLoading(false);
@@ -157,30 +146,26 @@ function AddLeadModal({ onClose }) {
   };
 
   return (
-    <div style={styles.backdrop}>
-      <div style={styles.modalContainer}>
-        <div style={styles.modalHeader}>
-          <h2 style={styles.modalTitle}>Add New Interaction</h2>
-          <button
-            aria-label="Close"
-            style={styles.closeButton}
-            onClick={() => navigate("/")}
-          >
+    <div className="backdrop">
+      <div className="modal-container">
+        <div className="modal-header">
+          <h2 className="modal-title">Add New Interaction</h2>
+          <button className="close-button" onClick={() => navigate("/")}>
             &times;
           </button>
         </div>
 
-        {error && <div style={styles.errorAlert}>{error}</div>}
+        {error && <div className="error-alert">{error}</div>}
 
         {isLoading && (
-          <div style={styles.loadingOverlay}>
-            <div style={styles.loadingText}>Recording interaction...</div>
+          <div className="loading-overlay">
+            <div className="loading-text">Recording interaction...</div>
           </div>
         )}
 
-        <form style={styles.form} onSubmit={handleSubmit}>
-          <section style={styles.section}>
-            <div style={styles.formRow}>
+        <form className="form" onSubmit={handleSubmit}>
+          <section className="section">
+            <div className="form-row">
               <TextInput
                 label="Interaction Title*"
                 value={interactionTitle}
@@ -197,7 +182,7 @@ function AddLeadModal({ onClose }) {
                 }))}
               />
             </div>
-            <div style={styles.formRow}>
+            <div className="form-row">
               <SelectInput
                 label="Choose POC"
                 value={selectedPocId}
@@ -219,29 +204,29 @@ function AddLeadModal({ onClose }) {
             </div>
           </section>
 
-          <section style={styles.section}>
-            <div style={styles.formRow}>
-              <div style={styles.inputContainer}>
-                <label htmlFor="interactionDate" style={styles.label}>
+          <section className="section">
+            <div className="form-row">
+              <div className="input-container">
+                <label htmlFor="interactionDate" className="label">
                   Interaction Date
                 </label>
                 <DatePicker
                   id="interactionDate"
                   selected={interactionDate}
                   onChange={(date) => setInteractionDate(date)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  className="input date-picker"
                   dateFormat="dd/MM/yy"
                 />
               </div>
-              <div style={styles.inputContainer}>
-                <label htmlFor="followUpDate" style={styles.label}>
+              <div className="input-container">
+                <label htmlFor="followUpDate" className="label">
                   Follow Up Date
                 </label>
                 <DatePicker
                   id="followUpDate"
                   selected={followUpDate}
                   onChange={(date) => setFollowUpDate(date)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  className="input date-picker"
                   showYearDropdown
                   showMonthDropdown
                   dropdownMode="select"
@@ -251,38 +236,33 @@ function AddLeadModal({ onClose }) {
             </div>
           </section>
 
-          <section style={styles.section}>
-            <h3 style={styles.sectionTitle}>Details</h3>
-            <div style={styles.formRow}>
+
+          <section className="section">
+            <h3 className="section-title">Details</h3>
+            <div className="form-row">
               <TextArea
-                label="Summary*"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                label="Summary"
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
                 placeholder="Summary of interaction..."
               />
             </div>
-            <div style={styles.formRow}>
+            <div className="form-row">
               <TextArea
                 label="Outcome"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
+                value={outcome}
+                onChange={(e) => setOutcome(e.target.value)}
                 placeholder="Outcome of interaction..."
               />
             </div>
           </section>
 
-          <div style={styles.actions}>
-            <button
-              type="button"
-              style={{ ...styles.button, ...styles.cancelButton }}
-              onClick={() => navigate("/")}
-            >
+
+          <div className="actions">
+            <button className="button cancel-button" onClick={() => navigate("/")}>
               Cancel
             </button>
-            <button
-              type="submit"
-              style={{ ...styles.button, ...styles.primaryButton }}
-            >
+            <button type="submit" className="button primary-button">
               Record
             </button>
           </div>
@@ -292,33 +272,14 @@ function AddLeadModal({ onClose }) {
   );
 }
 
-function TextInput({ label, value, onChange, placeholder, type = "text" }) {
-  const id = label.replace(/\s+/g, "_").toLowerCase();
-  return (
-    <div style={styles.inputContainer}>
-      <label htmlFor={id} style={styles.label}>
-        {label}
-      </label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        style={styles.input}
-      />
-    </div>
-  );
-}
+export default AddInteraction;
+
 
 function SelectInput({ label, value, onChange, options = [] }) {
-  const id = label.replace(/\s+/g, "_").toLowerCase();
   return (
-    <div style={styles.inputContainer}>
-      <label htmlFor={id} style={styles.label}>
-        {label}
-      </label>
-      <select id={id} value={value} onChange={onChange} style={styles.select}>
+    <div className="input-container">
+      <label className="label">{label}</label>
+      <select value={value} onChange={onChange} className="select">
         <option value="">Select...</option>
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -333,8 +294,8 @@ function SelectInput({ label, value, onChange, options = [] }) {
 function TextArea({ label, value, onChange, placeholder }) {
   const id = label.replace(/\s+/g, "_").toLowerCase();
   return (
-    <div style={styles.inputContainer}>
-      <label htmlFor={id} style={styles.label}>
+    <div className="input-container">
+      <label htmlFor={id} className="label">
         {label}
       </label>
       <textarea
@@ -342,153 +303,28 @@ function TextArea({ label, value, onChange, placeholder }) {
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        style={styles.textarea}
+        className="textarea"
         rows={3}
       />
     </div>
   );
 }
 
-const styles = {
-  backdrop: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100vw",
-    height: "100vh",
-    background: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 9999,
-  },
-  modalContainer: {
-    background: "#fff",
-    width: "90%",
-    maxWidth: "600px",
-    borderRadius: "8px",
-    padding: "1.5rem",
-    position: "relative",
-    boxSizing: "border-box",
-    maxHeight: "90vh",
-    overflowY: "auto",
-  },
-  modalHeader: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: "1rem",
-  },
-  modalTitle: {
-    margin: 0,
-    fontSize: "1.25rem",
-    fontWeight: "600",
-  },
-  closeButton: {
-    background: "transparent",
-    border: "none",
-    fontSize: "1.5rem",
-    cursor: "pointer",
-    lineHeight: 1,
-    color: "#999",
-    transition: "color 0.2s",
-  },
-  errorAlert: {
-    backgroundColor: "#f8d7da",
-    color: "#721c24",
-    borderRadius: "4px",
-    padding: "0.75rem",
-    marginBottom: "1rem",
-  },
-  loadingOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "calc(100% - 3rem)",
-    height: "calc(100% - 3rem)",
-    background: "rgba(255,255,255,0.7)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "8px",
-  },
-  loadingText: {
-    fontWeight: "bold",
-    fontSize: "1rem",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  section: {
-    marginBottom: "1rem",
-  },
-  sectionTitle: {
-    fontSize: "1rem",
-    fontWeight: 600,
-    marginBottom: "0.5rem",
-  },
-  formRow: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "1rem",
-    marginBottom: "1rem",
-  },
-  inputContainer: {
-    flex: 1,
-    minWidth: "200px",
-    display: "flex",
-    flexDirection: "column",
-  },
-  label: {
-    marginBottom: "0.25rem",
-    fontWeight: 500,
-    fontSize: "0.9rem",
-  },
-  input: {
-    padding: "0.5rem",
-    fontSize: "0.9rem",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    outline: "none",
-  },
-  select: {
-    padding: "0.5rem",
-    fontSize: "0.9rem",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    outline: "none",
-  },
-  textarea: {
-    padding: "0.5rem",
-    fontSize: "0.9rem",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    outline: "none",
-    resize: "vertical",
-  },
-  actions: {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "1rem",
-    marginTop: "1rem",
-  },
-  button: {
-    cursor: "pointer",
-    padding: "0.6rem 1.2rem",
-    fontSize: "0.9rem",
-    borderRadius: "4px",
-    border: "none",
-    transition: "background-color 0.2s",
-  },
-  cancelButton: {
-    backgroundColor: "#ccc",
-    color: "#333",
-  },
-  primaryButton: {
-    backgroundColor: "#0d6efd",
-    color: "#fff",
-  },
-};
-
-export default AddLeadModal;
+function TextInput({ label, value, onChange, placeholder, type = "text" }) {
+  const id = label.replace(/\s+/g, "_").toLowerCase();
+  return (
+    <div className="input-container">
+      <label htmlFor={id} className="label">
+        {label}
+      </label>
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="input"
+      />
+    </div>
+  );
+}

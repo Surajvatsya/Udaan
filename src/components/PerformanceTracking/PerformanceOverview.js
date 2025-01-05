@@ -6,7 +6,7 @@ import {
   TopPerformingAccounts,
   AtRiskAccounts,
   TimePeriodSelector,
-} from "../AccountPerformanceDistribution";
+} from "../../components/PerformanceTracking/AccountPerformanceDistribution";
 
 const PerformanceTrackingPage = () => {
   const [orderStats, setOrderStats] = useState({
@@ -133,8 +133,6 @@ const PerformanceTrackingPage = () => {
     fetchOrderTrends();
   }, [timePeriod]);
 
-  const revenueData = [50000, 30000, 20000, 10000];
-  const accountLabels = ["Account A", "Account B", "Account C", "Account D"];
 
   return (
     <div className="flex h-screen">
@@ -170,11 +168,9 @@ const PerformanceTrackingPage = () => {
           />
         )}
 
-        {/* Charts and Tables */}
+
         <div className="grid grid-cols-2 gap-6 mt-6">
-          {/* Order Trends */}
           <div className="col-span-1  p-4 shadow rounded-lg">
-            {/* <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Trends</h2> */}
             <OrderTrendsChart orderData={orderData} />
           </div>
 
@@ -187,12 +183,7 @@ const PerformanceTrackingPage = () => {
           </div>
         </div>
 
-        {/* Account Tables */}
         <div className="grid grid-cols-2 gap-6 mt-6">
-          {/* Top Performing Accounts */}
-          {/* <TopPerformingAccounts /> */}
-
-          {/* At-Risk Accounts */}
           {loading ? (
             <p>Loading...</p>
           ) : error ? (
